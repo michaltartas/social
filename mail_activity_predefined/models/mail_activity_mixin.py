@@ -98,7 +98,7 @@ class MailActivityMixin(models.AbstractModel):
                 "modifiers": '{"invisible": [["%s", "=", false]]}'
                 % (self._mail_activity_predefined_fieldname(activity_type),),
                 "data-mail-activity-type": str(activity_type.id),
-                "icon": activity_type.icon,
+                "icon": activity_type.icon or "",
             },
         )
 
