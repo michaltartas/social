@@ -64,15 +64,17 @@ class MailActivityMixin(models.AbstractModel):
             return result
 
         arch = etree.fromstring(result["arch"])
-        for container in (
-            arch.xpath("//header")
-            or arch.xpath("//div[hasclass('oe_button_box')]")
-            or arch.xpath(".")
-        ):
-            for activity in predefined_activities:
-                button = self._mail_activity_predefined_button(activity, container)
-                self._mail_activity_predefined_add_button(button, container)
-                self._mail_activity_predefined_add_field(result, container, activity)
+        header_button = etree.Element("header", {'name': 'button_header'})
+        index = 0
+        header = arch.find(".//header")
+        if header is not None:
+            index +=arch.index(header) + 1  # plus 1 as we want header fot buttons after main header
+        arch.insert(index,header_button)
+
+        for activity in predefined_activities:
+            button = self._mail_activity_predefined_button(activity, header_button)
+            self._mail_activity_predefined_add_button(button, header_button)
+            self._mail_activity_predefined_add_field(result, header_button, activity)
         result["arch"] = etree.tostring(arch)
         return result
 
